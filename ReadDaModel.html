@@ -1,0 +1,130 @@
+<html>
+	<head>
+		<title>
+
+			<html>
+	<head>
+		<title> Load da awesome model</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script>
+
+		//if (!Detector.webgl) Detector.addGetWebGLMessage();
+
+			// variables
+			var SCREEN_WIDTH = window.innerWidth;
+			var SCREEN_HEIGHT = window.innerHeight;
+			var FLOOR = 0;
+
+			var container;
+
+			var camera, scene;
+			var webglRenderer;
+
+			var zmesh, geometry;
+
+			var mouseX = 0, mouseY = 0;
+
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+
+		// initialising
+		function init () {
+
+				//everything is contained here
+				container = 
+				document.createElement('div');
+
+				document.body.appendChild(container);
+
+				//Camera
+				camera = new THREE.perspectiveCamera(
+					75, SCREEN_WIDTH / SCREEN_HEIGHT, 
+					1,100000
+				);
+
+				camera.position.z = 75;
+
+				//scene
+				scene = new THREE.scene();
+
+				// Lights
+				var ambient = new THREE.AmbientLight(0xffffff);
+				scene.add(ambient);
+
+				// More lights
+				var directionalLight = new THREE.DirectionalLight(0xffeedd);
+
+				directionalLight.position.set(0, -70, 100).normalize();
+				scene.add(directionalLight);
+		}
+
+		/* Renderer
+		The WebGLRenderer is an object that, among other things, has the attribute .domElement — the <canvas> element that will house the WebGL application*/
+		webglRenderer = new THREE.WebGLRenderer();
+		webglRenderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		webglRenderer.domElement.style.position = 'relative';
+		container.appendChild(webglRenderer.domElement);
+
+		Then we load the model, and call the function createScene(). Add this next:
+		
+		// Load the model in JSON format
+		var loader = new THREE.JSONLoader(),
+		callbackModel = function(geometry) {
+			createScene(geometry, 90, FLOOR, -50, 105)
+		};
+		loader.load({
+			model: 'C:\Users\user\Documents\GitHub\3Dtest\SUCCESS.js',
+			callback: callbackModel
+		});
+
+		//create a scene that fts the model
+		function createScene( geometry, x, y, z, b ) {
+			zmesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial() );
+			zmesh.position.set( 0, 16, 0 );
+			zmesh.scale.set( 1, 1, 1 );
+			scene.add( zmesh );
+		}
+
+		//
+		function onDocumentMouseMove(event) {
+			mouseX = (event.clientX - windowHalfX);
+			mouseY = (event.clientY - windowHalfY);
+		}
+
+		function animate() {
+			requestAnimationFrame( animate );
+			render();
+		}
+
+		function render() {
+			zmesh.rotation.set(-mouseY/500 + 1, -mouseX/200, 0);
+			webglRenderer.render(scene, camera);
+		}
+		
+				
+		//Mouse event listener
+
+			document.addEventListener(
+				'mousemove',
+				onDocumentMouseMove,
+				false
+			);
+
+			//call init and animate
+		init();
+		animate();
+
+
+
+
+
+
+		</script>
+	</body>
+</html>
